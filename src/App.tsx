@@ -4,10 +4,17 @@ import CountDown from './components/countDown'
 
 
 function App() {
+
   return (
-    <CountDown autoStart={false} expiryTimeStamp={1743360903} onExpire={() => {
-      alert('Time is UP!')
-    }} size='large' />
+    <CountDown
+      variant='info'
+      showHours={false}
+      expiryTimeStamp={1704003433}
+      onExpire={() => {
+        alert('Time is UP!')
+      }}
+      size='large' />
+
   )
 }
 

@@ -8,10 +8,10 @@ import { sizeEnum, type CountDownProps } from './../../../types.ts'
 
 function CountDown({ size = "normal", className, variant = "primary", expiryTimeStamp, autoStart = true, onExpire, showTitle, showDays = true, showHours = true }: CountDownProps) {
   const [_autoStart, _setAutoStart] = useState(autoStart)
-  const { days, hours, minutes, seconds } = useTime(expiryTimeStamp)
+  const { days, hours, minutes, seconds } = useTime(expiryTimeStamp, showDays, showHours)
   useEffect(() => {
-    if (days == 0 && hours == 0 && minutes == 0 && seconds == 0)
-      onExpire()
+    if ((days == 0 || !showDays || !showHours) && (hours == 0 || !showHours) && minutes == 0 && seconds == 0)
+      onExpire?.()
   }, [days, hours, minutes, seconds])
   const perimeter = 2 * Math.PI * sizeEnum[size]
   return (
@@ -19,22 +19,32 @@ function CountDown({ size = "normal", className, variant = "primary", expiryTime
       {showTitle && <div style={{ color: 'white' }}>{showTitle}</div>}
       <div id='time' >
         {/* DAY */}
-        {showDays && <Circle size={size}
-          strokeDashoffset={_autoStart ? (perimeter - (perimeter * days) / 365) : perimeter}
-          title='Days'
-          value={_autoStart ? days : 0} />}
+        {showDays && showHours &&
+          <Circle
+            variant={variant}
+            size={size}
+            strokeDashoffset={_autoStart ? days! > 365 ? 0 : (perimeter - (perimeter * days!) / 365) : perimeter}
+            title='Days'
+            value={_autoStart ? days! : 0} />}
         {/* HOUR */}
-        {showHours && <Circle size={size}
-          strokeDashoffset={_autoStart ? (perimeter - (perimeter * hours) / 24) : perimeter}
-          title='Hours'
-          value={_autoStart ? hours : 0} />}
+        {showHours &&
+          <Circle
+            size={size}
+            variant={variant}
+            strokeDashoffset={_autoStart ? (perimeter - (perimeter * hours!) / 24) : perimeter}
+            title='Hours'
+            value={_autoStart ? hours! : 0} />}
         {/* MINUTES */}
-        <Circle size={size}
+        <Circle
+          variant={variant}
+          size={size}
           strokeDashoffset={_autoStart ? (perimeter - (perimeter * minutes) / 60) : perimeter}
           title='Minutes'
           value={_autoStart ? minutes : 0} />
         {/* SECONDS */}
-        <Circle size={size}
+        <Circle
+          variant={variant}
+          size={size}
           strokeDashoffset={_autoStart ? (perimeter - (perimeter * seconds) / 60) : perimeter}
           title='Seconds'
           value={_autoStart ? seconds : 0} />
